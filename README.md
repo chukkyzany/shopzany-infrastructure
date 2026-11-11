@@ -79,10 +79,17 @@ After placing an order, they can track it on their own orders page. This also pr
 
 (Payment is simulated in this version. See the limits section below.)
 
+---
 
+## Step 4: Protect the database
+
+The customer data lives in Amazon RDS for MySQL, in the private database subnets. It has no public IP address, no route to the internet, and a security group that only accepts connections from the app servers.
+
+When a page needs data, the PHP code connects to the database's endpoint on port 3306. Two things have to be true for that to work:
 
 1. **The security group allows it.** The database's group accepts port 3306 only from the app servers' group, and the app servers' group allows the connection out.
 2. **There's a network path.** Both tiers are in the same VPC, so the built-in local route connects them. That route is also the only way in, because the database subnets have no other routes.
+
 The app connects to the endpoint **name**, not a fixed IP address, because the IP behind a managed database can change during maintenance or a failover, while the name stays valid.
 
 The RDS console confirms that it is not publicly accessible:
@@ -182,12 +189,5 @@ terraform destroy
 
 ---
 
-Built by Chukwuyem Odor  as hands-on cloud engineering practice.
-
-When a page needs data, the PHP code connects to the database's endpoint on port 3306. Two things have to be true for that to work:
----
-
-
-The customer data lives in Amazon RDS for MySQL, in the private database subnets. It has no public IP address, no route to the internet, and a security group that only accepts connections from the app servers.
-## Step 4: Protect the database
+Built by Chukwuyem Odor as hands-on cloud engineering practice.
 
